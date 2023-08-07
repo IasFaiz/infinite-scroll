@@ -1,35 +1,56 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState(Array.from({ length: 25 }, (a, b) => b + 1));
+  const [hasMOre, setMore] = useState(true);
+  const AddData = () => {
+    if (data.length < 100) {
+      setTimeout(() => {
+        setData((data) => [
+          ...data,
+          ...Array.from({ length: 25 }, (a, b) => b + data.length + 1),
+        ]);
+      }, 2000);
+    } else {
+      setMore(false);
+    }
+  };
 
+  console.log(data);
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
       <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+        <em>
+          This is an example of <b>infinite scroll</b>{" "}
+        </em>
       </p>
+      <InfiniteScroll
+        dataLength={data.length}
+        next={AddData}
+        hasMore={hasMOre}
+        loader={
+          <h4>
+            <p style={{ textAlign: "center" }}>
+              <b>Wait, Loading...</b>
+            </p>
+          </h4>
+        }
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>Yay! You have seen it all</b>
+          </p>
+        }
+      >
+        {data.map((item) => (
+          <div className="item">
+            <p>This is {item}th div</p>
+          </div>
+        ))}
+      </InfiniteScroll>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
